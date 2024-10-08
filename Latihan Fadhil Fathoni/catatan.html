@@ -7,7 +7,7 @@
     <style>
       body {
         font-family: Arial, sans-serif;
-        background-color: #fadbdb;
+        background-color: #f4f4f4;
         margin: 0;
         padding: 20px;
       }
@@ -84,18 +84,18 @@
         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
       }
 
-      .salin-btn {
-        margin-top: 10px;
+      .copy-btn {
         padding: 5px 10px;
         background-color: #28a745;
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 3px;
         cursor: pointer;
+        margin-top: 10px;
         transition: background-color 0.3s ease;
       }
 
-      .salin-btn:hover {
+      .copy-btn:hover {
         background-color: #218838;
       }
     </style>
@@ -139,16 +139,20 @@
       }
 
       // Function to copy description to clipboard
-      function salinDeskripsi(deskripsi) {
-        navigator.clipboard.writeText(deskripsi).then(
-          () => {
-            alert("Deskripsi berhasil disalin ke clipboard!");
-          },
-          (err) => {
-            alert("Gagal menyalin deskripsi: " + err);
-          }
-        );
-      }
+      window.salinDeskripsi = function (deskripsi) {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(deskripsi)
+            .then(() => {
+              alert("Deskripsi berhasil disalin ke clipboard!");
+            })
+            .catch((err) => {
+              console.error("Gagal menyalin deskripsi:", err);
+              alert("Gagal menyalin deskripsi. Pastikan halaman diakses melalui HTTPS.");
+            });
+        } else {
+          alert("Browser Anda tidak mendukung fungsi clipboard.");
+        }
+      };
 
       // Function to display saved notes
       function tampilkanCatatan() {
@@ -170,7 +174,7 @@
                     ? `<p><a href="${catatan.link}" target="_blank">Kunjungi Link</a></p>`
                     : ""
                 }
-                <button class="salin-btn" onclick="salinDeskripsi('${catatan.description}')">Salin Deskripsi</button>
+                <button class="copy-btn" onclick="salinDeskripsi('${catatan.description}')">Salin Deskripsi</button>
               </div>
             `;
             });
