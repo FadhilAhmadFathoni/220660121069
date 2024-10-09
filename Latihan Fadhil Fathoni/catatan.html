@@ -98,6 +98,28 @@
       .copy-btn:hover {
         background-color: #218838;
       }
+
+      /* Style untuk notifikasi */
+      .notification {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #28a745;
+        color: white;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        transition: opacity 0.3s ease;
+        text-align: center; /* Pusatkan teks di dalam notifikasi */
+      }
+
+      .notification.show {
+        display: block;
+        opacity: 1;
+      }
     </style>
 
     <!-- Firebase SDK -->
@@ -143,11 +165,10 @@
         if (navigator.clipboard) {
           navigator.clipboard.writeText(deskripsi)
             .then(() => {
-              alert("Deskripsi berhasil disalin ke clipboard!");
+              showCopyNotification();
             })
             .catch((err) => {
               console.error("Gagal menyalin deskripsi:", err);
-              alert("Gagal menyalin deskripsi. Pastikan halaman diakses melalui HTTPS.");
             });
         } else {
           alert("Browser Anda tidak mendukung fungsi clipboard.");
@@ -164,8 +185,8 @@
           if (data) {
             Object.keys(data).forEach((key) => {
               const catatan = data[key];
-              notesContainer.innerHTML += `
-              <div class="note">
+              notesContainer.innerHTML += 
+              `<div class="note">
                 <h3>${catatan.title}</h3>
                 <p><strong>Oleh:</strong> ${catatan.name}</p>
                 <p>${catatan.description}</p>
@@ -175,8 +196,7 @@
                     : ""
                 }
                 <button class="copy-btn" onclick="salinDeskripsi('${catatan.description}')">Salin Deskripsi</button>
-              </div>
-            `;
+              </div>`;
             });
           } else {
             notesContainer.innerHTML =
@@ -184,6 +204,23 @@
           }
         });
       }
+
+      // Function to show notification when copying description
+      function showCopyNotification() {
+        const notification = document.getElementById("copyNotification");
+        notification.classList.add("show");
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 3000); // Hide after 3 seconds
+      }
+      function showSaveNotification() {
+  const notification = document.getElementById("saveNotification");
+  notification.classList.add("show");
+  setTimeout(() => {
+    notification.classList.remove("show");
+  }, 3000); // Sembunyikan setelah 3 detik
+}
+
 
       // Event listener for form submit
       document.addEventListener("DOMContentLoaded", () => {
@@ -198,6 +235,8 @@
           // Add note to Firebase
           tambahCatatan(title, name, description, link);
 
+          showSaveNotification();
+
           // Clear form after submit
           noteForm.reset();
         });
@@ -209,15 +248,16 @@
   </head>
   <body>
     <h1>Catatan</h1>
-
+    <div id="saveNotification" class="notification">Catatan berhasil disimpan!</div>
+    <div id="copyNotification" class="notification">Deskripsi berhasil disalin ke clipboard!</div>
     <form id="noteForm">
-      <input type="text" id="title" placeholder="Judul Catatan" required />
-      <input type="text" id="name" placeholder="Nama (Opsional)" />
+      <input type="text" id="title" placeholder="Judul" required />
+      <input type="text" id="name" placeholder="Nama (opsional)" />
       <textarea id="description" placeholder="Deskripsi" required></textarea>
-      <input type="url" id="link" placeholder="Link (Opsional)" />
+      <input type="url" id="link" placeholder="Link (opsional)" />
       <button type="submit">Simpan Catatan</button>
     </form>
-
+    
     <div class="notes" id="notesContainer"></div>
   </body>
 </html>
