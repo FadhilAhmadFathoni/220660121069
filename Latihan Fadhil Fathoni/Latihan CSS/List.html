@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contoh CSS untuk List</title>
+    <style>
+        /* Mengatur list dengan list-style-type */
+        ul.circle-list {
+            list-style-type: circle; /* Menggunakan lingkaran sebagai bullet */
+        }
+
+        /* Mengatur list dengan gambar sebagai bullet */
+        ul.image-list {
+            list-style-image: url('https://i.pinimg.com/236x/af/56/ad/af56ada5a93d98565a1c2d3fb8215f48.jpg'); /* Ganti dengan URL gambar yang valid */
+            list-style-position: outside; /* Posisi bullet di luar konten */
+        }
+
+        /* Mengatur list dengan posisi bullet di dalam */
+        ul.inside-list {
+            list-style-type: square; /* Menggunakan kotak sebagai bullet */
+            list-style-position: inside; /* Posisi bullet di dalam konten */
+        }
+    </style>
+</head>
+<body>
+
+    <h1> dengan CSS</h1>
+
+    <!-- Contoh list dengan list-style-type: circle -->
+    <h2>List dengan list-style-type: circle</h2>
+    <ul class="circle-list">
+        <li>Item pertama</li>
+        <li>Item kedua</li>
+        <li>Item ketiga</li>
+    </ul>
+
+    <!-- Contoh list dengan list-style-image -->
+    <h2>List dengan list-style-image</h2>
+    <ul class="image-list">
+        <li>Item pertama</li>
+        <li>Item kedua</li>
+        <li>Item ketiga</li>
+    </ul>
+
+    <!-- Contoh list dengan list-style-position: inside -->
+    <h2>List dengan list-style-position: inside</h2>
+    <ul class="inside-list">
+        <li>Item pertama</li>
+        <li>Item kedua</li>
+        <li>Item ketiga</li>
+    </ul>
+
+</body>
+</html>

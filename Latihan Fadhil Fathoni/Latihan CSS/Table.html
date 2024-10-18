@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabel</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse; /* Menggabungkan border antara sel */
+            border-spacing: 0; /* Menghilangkan jarak antar sel */
+            font-size: 16px; /* Ukuran font di tabel */
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center; /* Perataan teks di dalam sel */
+        }
+
+        th {
+            background-color: #4CAF50; /* Warna background header tabel */
+            color: white; /* Warna teks header */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2; /* Warna background untuk baris genap */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tabel dengan CSS</h1>
+
+    <table>
+        <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>Umur</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Fadhil</td>
+            <td>25</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Ahmad</td>
+            <td>27</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Fathoni</td>
+            <td>30</td>
+        </tr>
+    </table>
+
+</body>
+</html>
