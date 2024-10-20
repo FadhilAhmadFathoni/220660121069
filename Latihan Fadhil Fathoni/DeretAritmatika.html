@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baris dan Deret Aritmatika</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+
+        .result p {
+            margin: 0;
+        }
+
+        .rumus {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #d1ecf1;
+            border-left: 5px solid #007bff;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            input[type="number"],
+            button {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Hitung Baris & Deret Aritmatika</h1>
+    <h2>Website untuk Bisma dari Fadhil Fathoni</h2>
+
+    <div class="container">
+        <label for="a">Nilai Awal (a):</label>
+        <input type="number" id="a" placeholder="Masukkan nilai a" required>
+
+        <label for="b">Selisih (b):</label>
+        <input type="number" id="b" placeholder="Masukkan nilai b" required>
+
+        <label for="n">Urutan ke-n (n):</label>
+        <input type="number" id="n" placeholder="Masukkan nilai n" required>
+
+        <button onclick="hitungAritmatika()">Hitung</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function hitungAritmatika() {
+            // Ambil nilai dari input
+            let a = parseFloat(document.getElementById('a').value);
+            let b = parseFloat(document.getElementById('b').value);
+            let n = parseFloat(document.getElementById('n').value);
+
+            // Validasi input
+            if (isNaN(a) || isNaN(b) || isNaN(n) || n <= 0) {
+                document.getElementById('result').innerHTML = '<p style="color: red;">Harap masukkan nilai yang valid.</p>';
+                return;
+            }
+
+            // Rumus Baris Aritmatika (Un = a + (n-1)b)
+            let Un = a + (n - 1) * b;
+
+            // Rumus Deret Aritmatika (Sn = n/2(2a + (n-1)b))
+            let Sn = (n / 2) * (2 * a + (n - 1) * b);
+
+            // Tampilkan rumus, cara perhitungan, dan hasil
+            let rumusBaris = `U<sub>n</sub> = a + (n-1) &times; b`;
+            let rumusDeret = `S<sub>n</sub> = n/2 &times; (2a + (n-1) &times; b)`;
+
+            let caraBaris = `U<sub>${n}</sub> = ${a} + (${n}-1) &times; ${b}<br>
+                            U<sub>${n}</sub> = ${a} + (${(n - 1)} &times; ${b})<br>
+                            U<sub>${n}</sub> = ${a} + ${(n - 1) * b}<br>
+                            U<sub>${n}</sub> = ${Un}`;
+
+            let caraDeret = `S<sub>${n}</sub> = ${n}/2 &times; (2 &times; ${a} + (${n}-1) &times; ${b})<br>
+                            S<sub>${n}</sub> = ${n}/2 &times; (${2 * a} + ${(n - 1)} &times; ${b})<br>
+                            S<sub>${n}</sub> = ${n}/2 &times; (${2 * a} + ${(n - 1) * b})<br>
+                            S<sub>${n}</sub> = ${Sn}`;
+
+            document.getElementById('result').innerHTML = `
+                <p><strong>Baris Aritmatika (Cara Perhitungan):</strong></p>
+                <p><strong>${rumusBaris}</strong></p>
+                <p>${caraBaris}</p>
+                <p><strong>Deret Aritmatika (Cara Perhitungan):</strong></p>
+                <p><strong>${rumusDeret}</strong></p>
+                <p>${caraDeret}</p>
+            `;
+        }
+
+        window.addEventListener('load', function() {
+            document.getElementById('a').value = '';
+            document.getElementById('b').value = '';
+            document.getElementById('n').value = '';
+        });
+    </script>
+
+</body>
+</html>
