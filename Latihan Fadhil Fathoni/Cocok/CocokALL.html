@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocok ALL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 10px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+            width: 30%;
+        }
+        .box {
+            border: 1px solid #000;
+            margin: 5px 0;
+            padding: 10px;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: background-color 0.3s, transform 0.3s;
+            font-size: 16px;
+        }
+        .box:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.05);
+        }
+        .selected {
+            background-color: #87CEEB;
+        }
+        .box.correct {
+            background-color: #28a745;
+            color: white;
+        }
+        .box.incorrect {
+            background-color: #dc3545;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+        #result {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        #continue-button {
+            display: none; /* Sembunyikan tombol sampai semua kotak hilang */
+            margin-top: 20px;
+            padding: 15px 30px; /* Meningkatkan padding untuk memperbesar tombol */
+            font-size: 20px; /* Meningkatkan ukuran font */
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        #continue-button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                flex-direction: row;
+                gap: 10px;
+            }
+            .column {
+                width: 48%;
+            }
+            .box {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
+
+    <h1>Game Pencocokan Kata</h1>
+    <div class="container">
+        <div class="column" id="english-column"></div>
+        <div class="column" id="indonesian-column"></div>
+    </div>
+    <div id="result"></div>
+    
+    <!-- Tombol Lanjutkan dengan style untuk memposisikan di tengah -->
+    <div style="display: flex; justify-content: center;">
+        <button id="continue-button" onclick="location.href='CocokH.html'">Lanjutkan</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const words = [
+                { english: 'House', indonesian: 'Rumah', word: 'house' },
+                { english: 'Cat', indonesian: 'Kucing', word: 'cat' },
+                { english: 'Tree', indonesian: 'Pohon', word: 'tree' },
+                { english: 'Car', indonesian: 'Mobil', word: 'car' },
+                { english: 'Book', indonesian: 'Buku', word: 'book' },
+                { english: 'Sun', indonesian: 'Matahari', word: 'sun' },
+                { english: 'Moon', indonesian: 'Bulan', word: 'moon' },
+                { english: 'Water', indonesian: 'Air', word: 'water' },
+                { english: 'Fire', indonesian: 'Api', word: 'fire' },
+                { english: 'Flower', indonesian: 'Bunga', word: 'flower' },
+                { english: 'Sky', indonesian: 'Langit', word: 'sky' },
+                { english: 'River', indonesian: 'Sungai', word: 'river' },
+                { english: 'Mountain', indonesian: 'Gunung', word: 'mountain' },
+                { english: 'Sea', indonesian: 'Laut', word: 'sea' },
+                { english: 'Grass', indonesian: 'Rumput', word: 'grass' },
+                { english: 'Cloud', indonesian: 'Awan', word: 'cloud' },
+                { english: 'Wind', indonesian: 'Angin', word: 'wind' },
+                { english: 'Rain', indonesian: 'Hujan', word: 'rain' },
+                { english: 'Snow', indonesian: 'Salju', word: 'snow' },
+                { english: 'Star', indonesian: 'Bintang', word: 'star' }
+            ];
+
+            let selected = null;
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            function getRandomPairs(array, num) {
+                const shuffled = array.sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, num);
+            }
+
+            function createBox(word, language) {
+                const box = document.createElement('div');
+                box.className = 'box';
+                box.textContent = word[language];
+                box.setAttribute('data-word', word.word);
+                box.onclick = () => checkMatch(box);
+                return box;
+            }
+
+            function initializeGame() {
+                const englishColumn = document.getElementById('english-column');
+                const indonesianColumn = document.getElementById('indonesian-column');
+
+                englishColumn.innerHTML = '';
+                indonesianColumn.innerHTML = '';
+
+                const selectedWords = getRandomPairs(words, 6);
+                const englishBoxes = selectedWords.map(word => createBox(word, 'english'));
+                const indonesianBoxes = selectedWords.map(word => createBox(word, 'indonesian'));
+
+                shuffleArray(englishBoxes);
+                shuffleArray(indonesianBoxes);
+
+                englishBoxes.forEach(box => englishColumn.appendChild(box));
+                indonesianBoxes.forEach(box => indonesianColumn.appendChild(box));
+            }
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            function checkMatch(element) {
+                if (selected) {
+                    if (selected === element) {
+                        document.getElementById('result').textContent = 'Klik elemen yang berbeda.';
+                        return;
+                    }
+
+                    if (selected.getAttribute('data-word') === element.getAttribute('data-word')) {
+                        selected.classList.add('correct');
+                        element.classList.add('correct');
+                        correctCount += 1;
+                        document.getElementById('result').textContent = 'Cocok!';
+                        setTimeout(() => {
+                            selected.classList.add('hidden');
+                            element.classList.add('hidden');
+                            selected = null;
+                            checkGameCompletion();
+                        }, 500);
+                    } else {
+                        incorrectCount += 1;
+                        element.classList.add('incorrect');
+                        selected.classList.add('incorrect');
+                        document.getElementById('result').textContent = 'Tidak cocok, coba lagi.';
+                        setTimeout(() => {
+                            selected.classList.remove('selected', 'incorrect');
+                            element.classList.remove('incorrect');
+                            selected = null;
+                        }, 500);
+                    }
+                } else {
+                    selected = element;
+                    selected.classList.add('selected');
+                    document.getElementById('result').textContent = 'Pilih elemen yang sesuai.';
+                }
+            }
+
+            function checkGameCompletion() {
+                const allCorrect = document.querySelectorAll('.box.correct');
+                const totalBoxes = document.querySelectorAll('.box').length;
+                if (allCorrect.length === totalBoxes) {
+                    document.getElementById('result').textContent = 'Selamat! Kamu telah menyelesaikan permainan.';
+                    document.getElementById('continue-button').style.display = 'block'; // Tampilkan tombol Lanjutkan
+                }
+            }
+
+            initializeGame();
+        });
+    </script>
+</body>
+</html>

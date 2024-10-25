@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Pencocokan Kata</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 10px;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0; /* Warna latar belakang progress bar */
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px; /* Jarak dari elemen di bawahnya */
+        }
+        .progress-bar {
+            height: 20px;
+            width: 0; /* Lebar awal progress bar */
+            background-color: #003366; /* Warna biru tua */
+            transition: width 0.4s ease-in-out; /* Transisi halus */
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* Jarak antar kolom */
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+            width: 30%; /* Lebar kolom untuk 6 baris */
+        }
+        .box {
+            border: 1px solid #000;
+            margin: 5px 0; /* Jarak antar kotak */
+            padding: 10px;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: background-color 0.3s, transform 0.3s;
+            font-size: 16px;
+        }
+        .box:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.05);
+        }
+        .selected {
+            background-color: #87CEEB;
+        }
+        .box.correct {
+            background-color: #28a745; /* Hijau untuk jawaban benar */
+            color: white; /* Warna teks putih agar kontras */
+        }
+        .box.incorrect {
+            background-color: #dc3545; /* Merah untuk jawaban salah */
+            color: white; /* Warna teks putih agar kontras */
+        }
+        .hidden {
+            display: none;
+        }
+        #result {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .score-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .score-box {
+            padding: 10px 20px;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .score-box.correct {
+            border-color: #28a745;
+        }
+        .score-box.incorrect {
+            border-color: #dc3545;
+        }
+        .score-box.correct:hover {
+            background-color: #d4edda; /* Warna latar belakang saat hover untuk nilai benar */
+        }
+        .score-box.incorrect:hover {
+            background-color: #f8d7da; /* Warna latar belakang saat hover untuk nilai salah */
+        }
+        /* Media Query untuk tampilan mobile */
+        @media (max-width: 600px) {
+            .container {
+                flex-direction: row; /* Tetap dalam baris untuk tampilan mobile */
+                gap: 10px; /* Jarak antar kolom pada perangkat mobile */
+            }
+            .column {
+                width: 48%; /* Lebar kolom pada perangkat mobile */
+            }
+            .box {
+                padding: 8px;
+                font-size: 14px;
+            }
+            #result, .score-box {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
+
+    <h1>Game Pencocokan Kata</h1>
+    <div class="container">
+        <div class="column" id="english-column"></div>
+        <div class="column" id="indonesian-column"></div>
+    </div>
+    <div id="result"></div>
+    <div class="score-container">
+        <div id="correct" class="score-box correct">Benar: 0</div>
+        <div id="incorrect" class="score-box incorrect">Salah: 0</div>
+    </div>
+
+    <script>
+        const words = [
+            { english: 'House', indonesian: 'Rumah', word: 'house' },
+            { english: 'Cat', indonesian: 'Kucing', word: 'cat' },
+            { english: 'Tree', indonesian: 'Pohon', word: 'tree' },
+            { english: 'Car', indonesian: 'Mobil', word: 'car' },
+            { english: 'Book', indonesian: 'Buku', word: 'book' },
+            { english: 'Sun', indonesian: 'Matahari', word: 'sun' },
+            { english: 'Moon', indonesian: 'Bulan', word: 'moon' },
+            { english: 'Water', indonesian: 'Air', word: 'water' },
+            { english: 'Fire', indonesian: 'Api', word: 'fire' },
+            { english: 'Flower', indonesian: 'Bunga', word: 'flower' },
+            { english: 'Sky', indonesian: 'Langit', word: 'sky' },
+            { english: 'River', indonesian: 'Sungai', word: 'river' },
+            { english: 'Mountain', indonesian: 'Gunung', word: 'mountain' },
+            { english: 'Sea', indonesian: 'Laut', word: 'sea' },
+            { english: 'Grass', indonesian: 'Rumput', word: 'grass' },
+            { english: 'Cloud', indonesian: 'Awan', word: 'cloud' },
+            { english: 'Wind', indonesian: 'Angin', word: 'wind' },
+            { english: 'Rain', indonesian: 'Hujan', word: 'rain' },
+            { english: 'Snow', indonesian: 'Salju', word: 'snow' },
+            { english: 'Star', indonesian: 'Bintang', word: 'star' }
+        ];
+
+        let selected = null;
+        let correctCount = 0;
+        let incorrectCount = 0;
+
+        function getRandomPairs(array, num) {
+            // Shuffle the array and get the first num pairs
+            const shuffled = array.sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, num);
+        }
+
+        function createBox(word, language) {
+            const box = document.createElement('div');
+            box.className = 'box';
+            box.textContent = word[language];
+            box.setAttribute('data-word', word.word);
+            box.onclick = () => checkMatch(box);
+            return box;
+        }
+
+        function initializeGame() {
+            const englishColumn = document.getElementById('english-column');
+            const indonesianColumn = document.getElementById('indonesian-column');
+
+            englishColumn.innerHTML = '';
+            indonesianColumn.innerHTML = '';
+
+            // Ambil 6 pasangan kata
+            const selectedWords = getRandomPairs(words, 6); // 6 pasangan kata
+            const englishBoxes = selectedWords.map(word => createBox(word, 'english'));
+            const indonesianBoxes = selectedWords.map(word => createBox(word, 'indonesian'));
+
+            // Mengacak urutan kotak sebelum menambahkannya ke kolom
+            shuffleArray(englishBoxes);
+            shuffleArray(indonesianBoxes);
+
+            englishBoxes.forEach(box => englishColumn.appendChild(box));
+            indonesianBoxes.forEach(box => indonesianColumn.appendChild(box));
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function checkMatch(element) {
+            if (selected) {
+                if (selected === element) {
+                    document.getElementById('result').textContent = 'Klik elemen yang berbeda.';
+                    return;
+                }
+
+                if (selected.getAttribute('data-word') === element.getAttribute('data-word')) {
+                    selected.classList.add('correct'); // Tambahkan kelas untuk jawaban benar
+                    element.classList.add('correct'); // Tambahkan kelas untuk jawaban benar
+                    correctCount += 1;
+                    document.getElementById('result').textContent = 'Cocok!';
+                    setTimeout(() => {
+                        selected.classList.add('hidden');
+                        element.classList.add('hidden');
+                        selected = null; // Set selected to null after hiding the elements
+                        checkGameCompletion(); // Cek apakah game sudah selesai
+                        updateProgressBar(); // Update progress bar
+                    }, 500); // Kotak akan menghilang setelah 500 ms (0,5 detik)
+                } else {
+                    incorrectCount += 1;
+                    element.classList.add('incorrect'); // Tambahkan kelas untuk jawaban salah
+                    selected.classList.add('incorrect'); // Tambahkan kelas untuk jawaban salah
+                    document.getElementById('result').textContent = 'Tidak cocok, coba lagi.';
+                    setTimeout(() => {
+                        selected.classList.remove('selected', 'incorrect'); // Remove classes after displaying the result
+                        element.classList.remove('incorrect');
+                        selected = null; // Reset selected after showing the result
+                    }, 500);
+                }
+                document.getElementById('correct').textContent = 'Benar: ' + correctCount;
+                document.getElementById('incorrect').textContent = 'Salah: ' + incorrectCount;
+            } else {
+                selected = element;
+                selected.classList.add('selected'); // Tambahkan kelas untuk menandai elemen yang dipilih
+                document.getElementById('result').textContent = 'Pilih elemen yang sesuai.';
+            }
+        }
+
+        function checkGameCompletion() {
+            const allCorrect = document.querySelectorAll('.box.correct');
+            const totalBoxes = document.querySelectorAll('.box').length;
+            if (allCorrect.length === totalBoxes) {
+                document.getElementById('result').textContent = 'Selamat! Kamu telah menyelesaikan permainan.';
+            }
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progress-bar');
+            const totalBoxes = document.querySelectorAll('.box').length;
+            const completedBoxes = document.querySelectorAll('.box.correct').length;
+            const progressPercentage = (completedBoxes / totalBoxes) * 100;
+            progressBar.style.width = progressPercentage + '%';
+        }
+
+        initializeGame(); // Inisialisasi permainan saat halaman dimuat
+    </script>
+</body>
+</html>

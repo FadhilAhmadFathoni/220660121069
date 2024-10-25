@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Data ke Array dengan localStorage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1, h2 {
+            color: #4A90E2;
+        }
+
+        input {
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #357ABD;
+        }
+    </style>
+</head>
+<body>
+    <h1>Masukkan Data ke Array dengan localStorage</h1>
+    <form id="dataForm">
+        <label for="inputData">Masukkan data:</label>
+        <input type="text" id="inputData" required>
+        <button type="submit">Simpan</button>
+    </form>
+
+    <h2>Data yang disimpan:</h2>
+    <ul id="dataList"></ul>
+
+    <script>
+        // Inisialisasi array kosong atau ambil data dari localStorage jika ada
+        let dataArray = JSON.parse(localStorage.getItem('dataArray')) || [];
+
+        // Tangkap elemen-elemen penting dari DOM
+        const form = document.getElementById('dataForm');
+        const inputData = document.getElementById('inputData');
+        const dataList = document.getElementById('dataList');
+
+        // Fungsi untuk menambah data ke dalam array dan menampilkannya
+        function addDataToArray(event) {
+            event.preventDefault(); // Mencegah form submit default
+
+            // Ambil nilai dari input
+            const data = inputData.value;
+
+            // Tambahkan nilai ke array
+            dataArray.push(data);
+
+            // Simpan array ke localStorage
+            localStorage.setItem('dataArray', JSON.stringify(dataArray));
+
+            // Bersihkan input field
+            inputData.value = '';
+
+            // Perbarui tampilan daftar data
+            updateDataList();
+        }
+
+        // Fungsi untuk memperbarui daftar data di halaman
+        function updateDataList() {
+            // Kosongkan daftar sebelumnya
+            dataList.innerHTML = '';
+
+            // Tampilkan setiap item dari array ke dalam <ul>
+            dataArray.forEach(function(item) {
+                const listItem = document.createElement('li');
+                listItem.textContent = item;
+                dataList.appendChild(listItem);
+            });
+        }
+
+        // Event listener untuk form submit
+        form.addEventListener('submit', addDataToArray);
+
+        // Perbarui tampilan saat halaman dimuat
+        updateDataList();
+    </script>
+</body>
+</html>
